@@ -1,0 +1,199 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram id="mer-clasico" name="MER - Modelo Entidad Relación">
+    <mxGraphModel dx="1873" dy="1065" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;fontStyle=1;fontColor=#1a1a2e;" value="MER — Rin&#39;ne (Notación Clásica Chen)" vertex="1">
+          <mxGeometry height="40" width="900" x="490" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=14;fontStyle=1;arcSize=0;" value="USUARIO" vertex="1">
+          <mxGeometry height="60" width="180" x="820" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-user-id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#1a1a2e;fontSize=11;" value="&lt;u&gt;id (UUID)&lt;/u&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="680" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-id" edge="1" parent="1" source="attr-user-id" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-user-email" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="email" vertex="1">
+          <mxGeometry height="50" width="110" x="840" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-email" edge="1" parent="1" source="attr-user-email" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-user-pass" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="password_hash" vertex="1">
+          <mxGeometry height="50" width="130" x="990" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-pass" edge="1" parent="1" source="attr-user-pass" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-user-created" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="created_at" vertex="1">
+          <mxGeometry height="50" width="110" x="1140" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-created" edge="1" parent="1" source="attr-user-created" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-song" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=14;fontStyle=1;arcSize=0;" value="CANCION" vertex="1">
+          <mxGeometry height="60" width="180" x="270" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#1a1a2e;fontSize=11;" value="&lt;u&gt;id (UUID)&lt;/u&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="60" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-id" edge="1" parent="1" source="attr-song-id" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-title" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="title" vertex="1">
+          <mxGeometry height="50" width="100" x="200" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-title" edge="1" parent="1" source="attr-song-title" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-artist" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="artist" vertex="1">
+          <mxGeometry height="50" width="100" x="310" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-artist" edge="1" parent="1" source="attr-song-artist" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-album" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="album" vertex="1">
+          <mxGeometry height="50" width="100" x="420" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-album" edge="1" parent="1" source="attr-song-album" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-dur" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="duration_seconds" vertex="1">
+          <mxGeometry height="50" width="140" x="40" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-dur" edge="1" parent="1" source="attr-song-dur" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-s3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="s3_key" vertex="1">
+          <mxGeometry height="50" width="100" x="60" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-s3" edge="1" parent="1" source="attr-song-s3" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-cover" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="cover_s3_key" vertex="1">
+          <mxGeometry height="50" width="120" x="180" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-cover" edge="1" parent="1" source="attr-song-cover" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-format" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="format" vertex="1">
+          <mxGeometry height="50" width="100" x="250" y="775" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-format" edge="1" parent="1" source="attr-song-format" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-size" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="file_size_bytes" vertex="1">
+          <mxGeometry height="50" width="130" x="430" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-size" edge="1" parent="1" source="attr-song-size" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-song-uploaded" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="uploaded_at" vertex="1">
+          <mxGeometry height="50" width="110" x="380" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="line-song-uploaded" edge="1" parent="1" source="attr-song-uploaded" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-song">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-pref" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=14;fontStyle=1;arcSize=0;" value="PREFERENCIA" vertex="1">
+          <mxGeometry height="60" width="180" x="820" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-pref-bg-type" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="background_type" vertex="1">
+          <mxGeometry height="50" width="140" x="620" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="line-pref-bgtype" edge="1" parent="1" source="attr-pref-bg-type" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-pref">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-pref-bg-val" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="background_value" vertex="1">
+          <mxGeometry height="50" width="140" x="780" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="line-pref-bgval" edge="1" parent="1" source="attr-pref-bg-val" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-pref">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-pref-hud" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="hud_color" vertex="1">
+          <mxGeometry height="50" width="110" x="940" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="line-pref-hud" edge="1" parent="1" source="attr-pref-hud" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-pref">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-pref-updated" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="updated_at" vertex="1">
+          <mxGeometry height="50" width="110" x="1060" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="line-pref-updated" edge="1" parent="1" source="attr-pref-updated" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-pref">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-queue" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=14;fontStyle=1;arcSize=0;" value="COLA_REPRODUCCION" vertex="1">
+          <mxGeometry height="60" width="200" x="1420" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-queue-id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#1a1a2e;fontSize=11;" value="&lt;u&gt;id (UUID)&lt;/u&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1500" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="line-queue-id" edge="1" parent="1" source="attr-queue-id" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-queue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-queue-pos" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="position" vertex="1">
+          <mxGeometry height="50" width="110" x="1640" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="line-queue-pos" edge="1" parent="1" source="attr-queue-pos" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-queue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="attr-queue-added" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a1a2e;fontSize=11;" value="added_at" vertex="1">
+          <mxGeometry height="50" width="110" x="1640" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="line-queue-added" edge="1" parent="1" source="attr-queue-added" style="edgeStyle=none;html=1;strokeColor=#1a1a2e;" target="ent-queue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-sube" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="SUBE" vertex="1">
+          <mxGeometry height="80" width="150" x="540" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-sube" edge="1" parent="1" source="ent-user" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;align=left;endArrow=none;" target="rel-sube" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="line-sube-song" edge="1" parent="1" source="rel-sube" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;align=right;endArrow=none;" target="ent-song" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-configura" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="CONFIGURA" vertex="1">
+          <mxGeometry height="80" width="150" x="835" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-conf" edge="1" parent="1" source="ent-user" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="rel-configura" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="line-conf-pref" edge="1" parent="1" source="rel-configura" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="ent-pref" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-agrega" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="AGREGA" vertex="1">
+          <mxGeometry height="80" width="150" x="1130" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="line-user-agrega" edge="1" parent="1" source="ent-user" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="rel-agrega" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="line-agrega-queue" edge="1" parent="1" source="rel-agrega" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="ent-queue" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-contiene" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e94560;strokeColor=#1a1a2e;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="CONTIENE" vertex="1">
+          <mxGeometry height="80" width="150" x="1130" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="line-queue-cont" edge="1" parent="1" source="ent-queue" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="rel-contiene" value="N">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1520" y="580" />
+              <mxPoint x="1520" y="800" />
+              <mxPoint x="1280" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line-cont-song" edge="1" parent="1" source="rel-contiene" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1a1a2e;strokeWidth=2;fontSize=14;fontStyle=1;endArrow=none;" target="ent-song" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="800" />
+              <mxPoint x="360" y="800" />
+              <mxPoint x="360" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
