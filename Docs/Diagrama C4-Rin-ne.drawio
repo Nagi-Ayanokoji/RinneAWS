@@ -1,0 +1,199 @@
+<mxfile host="app.diagrams.net" agent="Claude" pages="3">
+  <diagram id="c4-context" name="C4 - Contexto del Sistema">
+    <mxGraphModel dx="606" dy="345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title-ctx" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#1a1a2e;" value="C4 — Nivel 1: Diagrama de Contexto del Sistema — Rin&#39;ne" vertex="1">
+          <mxGeometry height="40" width="1000" x="327" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="shape=mxgraph.archimate3.actor;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;align=center;" value="Usuario/Persona que &#xa;sube y escucha su música personal" vertex="1">
+          <mxGeometry height="120" width="80" x="120" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="rinne-sys" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#e94560;fontColor=#ffffff;fontSize=12;arcSize=5;align=center;" value="&lt;b&gt;Rin&#39;ne&lt;/b&gt;&lt;br/&gt;[Software System]&lt;br/&gt;&lt;br/&gt;Plataforma web para subir,&lt;br/&gt;organizar y reproducir&lt;br/&gt;música personal" vertex="1">
+          <mxGeometry height="140" width="220" x="570" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#333333;fontSize=12;arcSize=5;" value="&lt;b&gt;AWS S3&lt;/b&gt;&lt;br/&gt;[External System]&lt;br/&gt;&lt;br/&gt;Almacena archivos de audio&lt;br/&gt;y portadas de canciones" vertex="1">
+          <mxGeometry height="120" width="180" x="1050" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-cf" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#333333;fontSize=12;arcSize=5;" value="&lt;b&gt;AWS CloudFront&lt;/b&gt;&lt;br/&gt;[External System]&lt;br/&gt;&lt;br/&gt;CDN para distribución&lt;br/&gt;de contenido estático" vertex="1">
+          <mxGeometry height="120" width="180" x="1050" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#6c8ebf;fontColor=#333;" target="rinne-sys" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Usa la aplicación web&lt;br&gt;para subir y escuchar música&lt;br&gt;[HTTPS]&lt;/font&gt;">
+          <mxGeometry relative="1" x="0.3333" y="-40" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="240" y="530" />
+              <mxPoint x="405" y="530" />
+              <mxPoint x="405" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="rinne-sys" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;strokeColor=#999999;" target="aws-s3" value="Lee/escribe archivos&lt;br/&gt;de audio [AWS SDK]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="rinne-sys" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;strokeColor=#999999;" target="aws-cf" value="Sirve contenido estático&lt;br/&gt;y archivos de audio [CDN]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="c4-container" name="C4 - Contenedores">
+    <mxGraphModel dx="824" dy="469" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title-cnt" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#1a1a2e;" value="C4 — Nivel 2: Diagrama de Contenedores — Rin&#39;ne" vertex="1">
+          <mxGeometry height="40" width="1200" x="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-border" parent="1" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;fillColor=none;strokeColor=#1a1a2e;strokeWidth=2;fontStyle=1;fontSize=13;verticalAlign=top;dashed=1;" value="&lt;b&gt;Rin&#39;ne [Software System]&lt;/b&gt;" vertex="1">
+          <mxGeometry height="780" width="1100" x="200" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="user-c" parent="1" style="shape=mxgraph.archimate3.actor;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=11;" value="Usuario" vertex="1">
+          <mxGeometry height="90" width="60" x="40" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#e94560;fontColor=#ffffff;fontSize=11;arcSize=5;" value="&lt;b&gt;Frontend SPA&lt;/b&gt;&lt;br/&gt;[Container: React + TypeScript + Vite]&lt;br/&gt;&lt;br/&gt;Interfaz de usuario. Maneja autenticación,&lt;br/&gt;biblioteca musical, reproductor y&lt;br/&gt;personalización del HUD." vertex="1">
+          <mxGeometry height="140" width="250" x="260" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#e94560;fontColor=#ffffff;fontSize=11;arcSize=5;" value="&lt;b&gt;Backend API&lt;/b&gt;&lt;br/&gt;[Container: Node.js + Express + TypeScript]&lt;br/&gt;&lt;br/&gt;API REST. Gestiona autenticación JWT,&lt;br/&gt;subida de archivos, metadatos de canciones,&lt;br/&gt;URLs presignadas S3 y preferencias." vertex="1">
+          <mxGeometry height="140" width="260" x="790" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="postgres" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=11;" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br/&gt;[Container: Database]&lt;br/&gt;&lt;br/&gt;Almacena usuarios, metadatos&lt;br/&gt;de canciones y preferencias&lt;br/&gt;de personalización del HUD." vertex="1">
+          <mxGeometry height="140" width="180" x="530" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffe6cc;strokeColor=#d6b656;fontColor=#000000;fontSize=11;" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br/&gt;[Container: Cache]&lt;br/&gt;&lt;br/&gt;Caché de sesiones,&lt;br/&gt;revocación de JWT tokens&lt;br/&gt;y rate limiting." vertex="1">
+          <mxGeometry height="140" width="180" x="860" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#333333;fontSize=11;arcSize=5;" value="&lt;b&gt;AWS S3&lt;/b&gt;&lt;br/&gt;[External: Object Storage]&lt;br/&gt;&lt;br/&gt;Almacena archivos de audio&lt;br/&gt;(MP3, FLAC, OGG, WAV) y&lt;br/&gt;portadas de canciones." vertex="1">
+          <mxGeometry height="140" width="180" x="1230" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="cdn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#333333;fontSize=11;arcSize=5;" value="&lt;b&gt;AWS CloudFront&lt;/b&gt;&lt;br/&gt;[External: CDN]&lt;br/&gt;&lt;br/&gt;Distribuye el frontend&lt;br/&gt;estático y archivos&lt;br/&gt;de audio (streaming)." vertex="1">
+          <mxGeometry height="120" width="180" x="1390" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2-label" parent="1" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=2;fontSize=10;fontColor=#333333;" value="EC2 t2.micro (Docker)" vertex="1">
+          <mxGeometry height="20" width="110" x="870" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="ec1" edge="1" parent="1" source="user-c" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#6c8ebf;" target="frontend" value="HTTPS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" edge="1" parent="1" source="frontend" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#e94560;" target="backend" value="REST API / HTTPS">
+          <mxGeometry relative="1" x="0.1053" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ec3" edge="1" parent="1" source="backend" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#82b366;" target="postgres" value="SQL / TCP 5432">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ec4" edge="1" parent="1" source="backend" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d6b656;" target="redis" value="Redis Protocol / TCP 6379">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec5" edge="1" parent="1" source="backend" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#999999;" target="s3" value="AWS SDK / HTTPS">
+          <mxGeometry relative="1" x="0.0937" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ec6" edge="1" parent="1" source="frontend" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#999999;dashed=1;" target="s3" value="URL Presignada / HTTPS">
+          <mxGeometry relative="1" x="0.1047" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ec7" edge="1" parent="1" source="cdn" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#999999;" target="frontend" value="Sirve assets / HTTPS">
+          <mxGeometry relative="1" x="-0.0682" y="30" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="c4-component" name="C4 - Componentes Backend">
+    <mxGraphModel dx="1585" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title-comp" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#1a1a2e;" value="C4 — Nivel 3: Componentes del Backend API — Rin&#39;ne" vertex="1">
+          <mxGeometry height="40" width="1200" x="170" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-box" parent="1" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;fillColor=none;strokeColor=#1a1a2e;strokeWidth=2;fontStyle=1;fontSize=12;verticalAlign=top;dashed=1;" value="&lt;b&gt;Backend API [Container: Node.js + Express]&lt;/b&gt;" vertex="1">
+          <mxGeometry height="750" width="1050" x="200" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-router" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;Auth Router&lt;/b&gt;&lt;br/&gt;[Component: Express Router]&lt;br/&gt;&lt;br/&gt;POST /auth/register&lt;br/&gt;POST /auth/login&lt;br/&gt;POST /auth/logout" vertex="1">
+          <mxGeometry height="120" width="200" x="240" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="songs-router" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;Songs Router&lt;/b&gt;&lt;br/&gt;[Component: Express Router]&lt;br/&gt;&lt;br/&gt;GET /songs&lt;br/&gt;POST /songs/upload&lt;br/&gt;DELETE /songs/:id&lt;br/&gt;GET /songs/:id/stream" vertex="1">
+          <mxGeometry height="120" width="200" x="730" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="pref-router" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;Preferences Router&lt;/b&gt;&lt;br/&gt;[Component: Express Router]&lt;br/&gt;&lt;br/&gt;GET /preferences&lt;br/&gt;PUT /preferences" vertex="1">
+          <mxGeometry height="120" width="200" x="1010" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-mw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="&lt;b&gt;JWT Middleware&lt;/b&gt;&lt;br/&gt;[Component: Passport.js]&lt;br/&gt;&lt;br/&gt;Valida token JWT en&lt;br/&gt;cada request protegido.&lt;br/&gt;Consulta blacklist en Redis." vertex="1">
+          <mxGeometry height="130" width="200" x="240" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="user-svc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;User Service&lt;/b&gt;&lt;br/&gt;[Component: Business Logic]&lt;br/&gt;&lt;br/&gt;Registro de usuarios,&lt;br/&gt;hashing bcrypt, validación&lt;br/&gt;de credenciales." vertex="1">
+          <mxGeometry height="130" width="200" x="570" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="song-svc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;Song Service&lt;/b&gt;&lt;br/&gt;[Component: Business Logic]&lt;br/&gt;&lt;br/&gt;Gestión de canciones: subida,&lt;br/&gt;extracción de metadatos con&lt;br/&gt;ffmpeg, generación de URLs&lt;br/&gt;presignadas S3, eliminación." vertex="1">
+          <mxGeometry height="130" width="200" x="890" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-svc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;S3 Service&lt;/b&gt;&lt;br/&gt;[Component: AWS SDK Wrapper]&lt;br/&gt;&lt;br/&gt;Upload de archivos, generación&lt;br/&gt;de URLs presignadas para&lt;br/&gt;lectura y eliminación." vertex="1">
+          <mxGeometry height="130" width="200" x="1070" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="db-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;Database Repository&lt;/b&gt;&lt;br/&gt;[Component: Data Access Layer]&lt;br/&gt;&lt;br/&gt;Queries SQL a PostgreSQL via&lt;br/&gt;pg/node-postgres. Modelos:&lt;br/&gt;User, Song, Preference." vertex="1">
+          <mxGeometry height="130" width="200" x="570" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-pg" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br/&gt;[Database]" vertex="1">
+          <mxGeometry height="90" width="120" x="610" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-redis" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br/&gt;[Cache]" vertex="1">
+          <mxGeometry height="90" width="120" x="280" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-s3b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontColor=#333333;fontSize=10;" value="&lt;b&gt;AWS S3&lt;/b&gt;&lt;br/&gt;[Storage]" vertex="1">
+          <mxGeometry height="80" width="120" x="1110" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="cp1" edge="1" parent="1" source="auth-router" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;" target="auth-mw" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp2" edge="1" parent="1" source="auth-router" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;" target="user-svc" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp3" edge="1" parent="1" source="songs-router" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;" target="song-svc" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp4" edge="1" parent="1" source="pref-router" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;" target="db-repo" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="210" />
+              <mxPoint x="980" y="140" />
+              <mxPoint x="510" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cp5" edge="1" parent="1" source="user-svc" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;" target="db-repo" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp6" edge="1" parent="1" source="song-svc" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;" target="db-repo" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp7" edge="1" parent="1" source="song-svc" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;" target="s3-svc" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp8" edge="1" parent="1" source="db-repo" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;" target="ext-pg" value="SQL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp9" edge="1" parent="1" source="auth-mw" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;" target="ext-redis" value="Cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cp10" edge="1" parent="1" source="s3-svc" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#999999;" target="ext-s3b" value="AWS SDK">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
