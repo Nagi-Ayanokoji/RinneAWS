@@ -4,7 +4,7 @@
   "description": "Rin'ne Music Streaming Platform - Backend API",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.10",
-    "tsx": "^4.19.0",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.0"
   }
 }
