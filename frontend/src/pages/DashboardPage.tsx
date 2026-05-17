@@ -2,16 +2,35 @@ import { useState } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Library } from '../components/Library';
 import { Player } from '../components/Player';
-import { Settings, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { usePreferencesStore } from '../stores/preferencesStore';
+import { PreferencesPanel } from '../components/PreferencesPanel';
+import { useEffect } from 'react';
 
 export function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [libraryOpen, setLibraryOpen] = useState(true);
   const user = useAuthStore((state) => state.user);
+  const { preferences, fetchPreferences } = usePreferencesStore();
+
+  useEffect(() => {
+    fetchPreferences();
+  }, []);
+
+  const dynamicStyles = {
+    '--tw-color-primary': preferences.hud_color,
+  } as React.CSSProperties;
+
+  const bgStyle = preferences.background_type === 'solid' 
+    ? { backgroundColor: preferences.background_value } 
+    : { backgroundImage: preferences.background_value };
 
   return (
-    <div className="bg-background text-on-surface font-body-md min-h-screen overflow-hidden flex bg-cyberpunk relative">
+    <div 
+      className="bg-background text-on-surface font-body-md min-h-screen overflow-hidden flex relative"
+      style={{ ...dynamicStyles, ...bgStyle }}
+    >
       {/* Mobile NavBar */}
       <nav className="md:hidden flex justify-between items-center px-5 py-2 w-full absolute top-0 z-50 bg-surface/10 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -33,6 +52,8 @@ export function DashboardPage() {
         <Library libraryOpen={libraryOpen} setLibraryOpen={setLibraryOpen} />
         <Player />
       </main>
+
+      <PreferencesPanel />
     </div>
   );
 }

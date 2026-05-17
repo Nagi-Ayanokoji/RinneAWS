@@ -1,5 +1,6 @@
 import { Music, ListMusic, Settings, HelpCircle, LogOut, ChevronLeft, ChevronRight, Edit2 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { usePreferencesStore } from '../stores/preferencesStore';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -9,6 +10,7 @@ interface SidebarProps {
 export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const setIsOpen = usePreferencesStore((state) => state.setIsOpen);
 
   return (
     <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} hidden md:flex fixed left-0 top-0 h-full flex-col z-40 bg-surface/20 backdrop-blur-[30px] text-primary font-body-md rounded-r-lg border-r border-white/20 shadow-[20px_0_40px_rgba(0,0,0,0.3)] transition-all duration-300`}>
@@ -44,10 +46,10 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             <ListMusic className="w-6 h-6" />
             {sidebarOpen && <span>Playlist</span>}
           </a>
-          <a href="#" className={`${sidebarOpen ? 'gap-3' : 'justify-center'} flex items-center p-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all`}>
+          <button onClick={() => setIsOpen(true)} className={`${sidebarOpen ? 'gap-3' : 'justify-center'} flex items-center p-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all w-full`}>
             <Settings className="w-6 h-6" />
             {sidebarOpen && <span>Preferences</span>}
-          </a>
+          </button>
         </nav>
       </div>
       <div className={`${sidebarOpen ? 'p-6' : 'p-4 items-center'} mt-auto flex flex-col gap-4`}>

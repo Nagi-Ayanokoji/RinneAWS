@@ -6,7 +6,6 @@ import { useAuthStore } from '../stores/authStore';
 
 export function Player() {
   const { 
-    currentIndex, 
     isPlaying, 
     volume, 
     progress, 

@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, ChevronLeft, ChevronRight, Music as MusicIcon, Search, Trash2 } from 'lucide-react';
 import { api } from '../api/client';
-import { usePlayerStore, Song } from '../stores/playerStore';
+import { usePlayerStore, type Song } from '../stores/playerStore';
+import { UploadModal } from './UploadModal';
 
 interface LibraryProps {
   libraryOpen: boolean;
@@ -11,46 +12,23 @@ interface LibraryProps {
 export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
   const [songs, setSongs] = useState<Song[]>([]);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const { playSong, setQueue, currentIndex } = usePlayerStore();
 
   const fetchSongs = async () => {
     try {
-      setLoading(true);
       const res = await api.get(`/songs?search=${search}`);
       setSongs(res.data.songs);
       setQueue(res.data.songs);
     } catch (err) {
       console.error('Error fetching songs:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchSongs();
   }, [search]);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('audio', file);
-
-    try {
-      setLoading(true);
-      await api.post('/songs/upload', formData);
-      fetchSongs();
-    } catch (err) {
-      console.error('Upload error:', err);
-      alert('Error al subir la canción');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const deleteSong = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -70,20 +48,13 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
         <div className="flex items-center gap-2">
           {libraryOpen && (
             <button 
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => setIsUploadModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 transition-colors neon-bloom"
             >
               <Plus className="w-[18px] h-[18px]" />
               <span className="font-label-sm text-label-sm">Importar música</span>
             </button>
           )}
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileUpload} 
-            className="hidden" 
-            accept="audio/*"
-          />
           <button 
             onClick={() => setLibraryOpen(!libraryOpen)} 
             className="p-2 rounded-full border border-white/10 text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 shrink-0 flex items-center justify-center"
@@ -137,6 +108,12 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
           </div>
         ))}
       </div>
+
+      <UploadModal 
+        isOpen={isUploadModalOpen} 
+        onClose={() => setIsUploadModalOpen(false)} 
+        onUploadComplete={fetchSongs} 
+      />
     </section>
   );
 }
