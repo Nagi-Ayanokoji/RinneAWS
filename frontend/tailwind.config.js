@@ -25,7 +25,7 @@ export default {
         "inverse-primary": "#006970",
         "secondary-container": "#7d01b1",
         "surface-container-highest": "#353437",
-        "primary": "#dbfcff",
+        "primary": "var(--tw-color-primary, #dbfcff)",
         "surface-container-low": "#1c1b1d",
         "surface-container": "#201f21",
         "surface-variant": "#353437",

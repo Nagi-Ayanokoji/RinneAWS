@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Howl } from 'howler';
 import { SkipBack, SkipForward, Play, Pause, Settings as SettingsIcon, Volume2 } from 'lucide-react';
 import { usePlayerStore } from '../stores/playerStore';
 import { useAuthStore } from '../stores/authStore';
+import { usePreferencesStore } from '../stores/preferencesStore';
 
 export function Player() {
   const { 
@@ -21,66 +22,113 @@ export function Player() {
   
   const token = useAuthStore((state) => state.token);
   const soundRef = useRef<Howl | null>(null);
+  const intervalRef = useRef<number | null>(null);
   const song = currentSong();
+  const setIsBackgroundSettingsOpen = usePreferencesStore((state) => state.setIsBackgroundSettingsOpen);
+  const hudColor = usePreferencesStore((state) => state.preferences.hud_color);
 
+  // Clear progress interval
+  const clearProgressInterval = useCallback(() => {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
+
+  // Start progress tracking
+  const startProgressTracking = useCallback(() => {
+    clearProgressInterval();
+    intervalRef.current = window.setInterval(() => {
+      if (soundRef.current && soundRef.current.playing()) {
+        const seek = soundRef.current.seek() as number;
+        setProgress(seek);
+        const dur = soundRef.current.duration();
+        if (dur && dur > 0) {
+          setDuration(dur);
+        }
+      }
+    }, 250);
+  }, [clearProgressInterval, setProgress, setDuration]);
+
+  // Load new song
   useEffect(() => {
     if (!song || !token) return;
 
+    // Unload previous sound
     if (soundRef.current) {
       soundRef.current.unload();
+      soundRef.current = null;
     }
+    clearProgressInterval();
+
+    const streamUrl = `http://localhost:3001/api/songs/${song.id}/stream?token=${token}`;
 
     const sound = new Howl({
-      src: [`http://localhost:3001/api/songs/${song.id}/stream`],
-      xhr: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      },
+      src: [streamUrl],
       html5: true,
+      format: ['mp3', 'wav', 'flac', 'm4a', 'mp4', 'ogg'],
       volume: volume,
-      onplay: () => {
+      onload: () => {
         setDuration(sound.duration());
       },
+      onplay: () => {
+        setDuration(sound.duration());
+        startProgressTracking();
+      },
+      onpause: () => {
+        clearProgressInterval();
+      },
+      onstop: () => {
+        clearProgressInterval();
+      },
       onend: () => {
+        clearProgressInterval();
         next();
+      },
+      onloaderror: (_id, err) => {
+        console.error('Howler load error:', err);
+      },
+      onplayerror: (_id, err) => {
+        console.error('Howler play error:', err);
+        // Attempt to unlock audio context on mobile
+        if (soundRef.current) {
+          soundRef.current.once('unlock', () => {
+            soundRef.current?.play();
+          });
+        }
       }
     });
 
     soundRef.current = sound;
-    if (isPlaying) sound.play();
+    // Auto-play the song when it loads
+    sound.play();
 
     return () => {
+      clearProgressInterval();
       sound.unload();
     };
   }, [song?.id, token]);
 
+  // Play/pause control
   useEffect(() => {
     if (!soundRef.current) return;
     if (isPlaying) {
-      soundRef.current.play();
+      if (!soundRef.current.playing()) {
+        soundRef.current.play();
+      }
     } else {
       soundRef.current.pause();
     }
   }, [isPlaying]);
 
+  // Volume control
   useEffect(() => {
     if (!soundRef.current) return;
     soundRef.current.volume(volume);
   }, [volume]);
 
-  useEffect(() => {
-    let interval: number;
-    if (isPlaying && soundRef.current) {
-      interval = window.setInterval(() => {
-        const currentProgress = soundRef.current?.seek() as number || 0;
-        setProgress(currentProgress);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
   const formatTime = (seconds: number) => {
+    if (!seconds || !isFinite(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -96,30 +144,28 @@ export function Player() {
     setProgress(newPos);
   };
 
+  const progressPercent = duration > 0 ? (progress / duration) * 100 : 0;
+
   return (
     <section className="flex-1 relative h-full flex flex-col justify-end p-12 z-0">
-      {/* Top Right Settings */}
-      <div className="absolute top-12 right-12 z-20">
-        <button className="p-3 rounded-full bg-surface/40 backdrop-blur-md border border-white/10 text-on-surface hover:text-primary transition-colors neon-bloom">
-          <SettingsIcon className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Vinyl Visualizer (Abstracted as a glowing circle) */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] rounded-full border border-primary/20 bg-surface-lowest/50 backdrop-blur-sm flex items-center justify-center opacity-30 pointer-events-none">
-        <div className="w-[500px] h-[500px] rounded-full border border-secondary/20 flex items-center justify-center">
-          <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary to-secondary shadow-[0_0_50px_rgba(0,219,233,0.3)] animate-pulse" />
+      {/* Vinyl Visualizer */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] rounded-full border border-white/10 bg-surface-lowest/50 backdrop-blur-sm flex items-center justify-center opacity-30 pointer-events-none">
+        <div className="w-[500px] h-[500px] rounded-full border border-white/10 flex items-center justify-center">
+          <div 
+            className={`w-48 h-48 rounded-full shadow-[0_0_50px_rgba(0,219,233,0.3)] ${isPlaying ? 'animate-pulse' : ''}`}
+            style={{ background: `linear-gradient(135deg, ${hudColor}, ${hudColor}80)` }}
+          />
         </div>
       </div>
 
       {/* Player Controls */}
       <div className="glass-panel rounded-xl p-8 max-w-2xl mx-auto w-full z-10">
         <div className="flex justify-between items-end mb-6">
-          <div>
-            <h2 className="font-display-lg text-4xl text-on-surface">{song?.title || 'No song selected'}</h2>
-            <p className="font-body-lg text-lg text-primary mt-2">{song?.artist || '-'}</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-display-lg text-4xl text-on-surface truncate">{song?.title || 'No song selected'}</h2>
+            <p className="font-body-lg text-lg mt-2 truncate" style={{ color: hudColor }}>{song?.artist || '-'}</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
              <div className="flex items-center gap-2 group relative">
                 <Volume2 className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
                 <input 
@@ -143,12 +189,15 @@ export function Player() {
             onClick={handleSeek}
           >
             <div 
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-container rounded-full shadow-[0_0_10px_rgba(0,219,233,0.5)]"
-              style={{ width: `${(progress / duration) * 100 || 0}%` }}
+              className="absolute top-0 left-0 h-full rounded-full shadow-[0_0_10px_rgba(0,219,233,0.5)]"
+              style={{ 
+                width: `${progressPercent}%`,
+                background: `linear-gradient(to right, ${hudColor}, ${hudColor}80)`
+              }}
             />
             <div 
               className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] cursor-pointer hover:scale-125 transition-transform"
-              style={{ left: `${(progress / duration) * 100 || 0}%` }}
+              style={{ left: `${progressPercent}%` }}
             />
           </div>
           <span className="font-label-sm text-xs text-on-surface-variant min-w-[32px]">{formatTime(duration)}</span>
@@ -161,7 +210,8 @@ export function Player() {
           </button>
           <button 
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,219,233,0.4)]"
+            className="w-16 h-16 rounded-full text-on-primary flex items-center justify-center hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,219,233,0.4)]"
+            style={{ backgroundColor: hudColor }}
           >
             {isPlaying ? <Pause className="w-9 h-9 fill-current" /> : <Play className="w-9 h-9 fill-current" />}
           </button>

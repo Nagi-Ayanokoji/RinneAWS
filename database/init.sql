@@ -14,6 +14,7 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   username VARCHAR(100),
+  avatar_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -47,9 +48,40 @@ CREATE INDEX idx_songs_artist ON songs(artist);
 CREATE TABLE user_preferences (
   user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   background_type VARCHAR(50) DEFAULT 'solid',
-  background_value VARCHAR(255) DEFAULT '#1a1a2e',
-  hud_color VARCHAR(7) DEFAULT '#e94560',
+  background_value VARCHAR(500) DEFAULT '#131315',
+  hud_color VARCHAR(7) DEFAULT '#00dbe9',
+  hud_opacity FLOAT DEFAULT 0.8,
+  particles_type VARCHAR(50) DEFAULT 'none',
+  particles_color VARCHAR(50) DEFAULT 'white',
+  particles_speed FLOAT DEFAULT 1,
+  particles_opacity FLOAT DEFAULT 0.5,
+  background_size VARCHAR(50) DEFAULT 'cover',
+  background_position VARCHAR(50) DEFAULT 'center',
+  background_repeat VARCHAR(50) DEFAULT 'no-repeat',
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- Playlists table
+-- ============================================
+CREATE TABLE playlists (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  cover_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_playlists_user_id ON playlists(user_id);
+
+-- ============================================
+-- Playlist Songs (junction table)
+-- ============================================
+CREATE TABLE playlist_songs (
+  playlist_id UUID NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+  song_id UUID NOT NULL REFERENCES songs(id) ON DELETE CASCADE,
+  added_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (playlist_id, song_id)
 );
 
 -- ============================================

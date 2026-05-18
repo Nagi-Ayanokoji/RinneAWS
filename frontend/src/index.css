@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --hud-color: #00dbe9;
+}
+
 @layer base {
   body {
     @apply bg-background text-on-surface font-body-md min-h-screen overflow-hidden;
@@ -25,7 +29,7 @@
   }
   
   .neon-bloom:hover {
-    box-shadow: 0 0 20px rgba(0, 219, 233, 0.15);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--hud-color) 30%, transparent);
   }
   
   .bg-cyberpunk {

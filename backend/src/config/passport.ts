@@ -4,7 +4,10 @@ import { query } from './database';
 
 export function configurePassport(passport: PassportStatic): void {
   const opts: StrategyOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: ExtractJwt.fromExtractors([
+      ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ExtractJwt.fromUrlQueryParameter('token')
+    ]),
     secretOrKey: process.env.JWT_SECRET || 'fallback-secret',
     algorithms: ['HS256'],
   };

@@ -36,6 +36,7 @@ const allowedMimeTypes = [
   'audio/x-flac',
   'audio/aac',
   'audio/mp4',
+  'video/mp4',
   'audio/x-m4a',
 ];
 
@@ -164,6 +165,35 @@ router.get('/:id/stream', authenticate, async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Stream error:', error);
     res.status(500).json({ error: 'Error al reproducir la canción' });
+  }
+});
+
+// PUT /api/songs/:id - Update a song
+router.put('/:id', authenticate, async (req: Request, res: Response) => {
+  try {
+    const user = (req as AuthRequest).user!;
+    const songId = req.params.id;
+    const { title, cover_path } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ error: 'El título es requerido' });
+    }
+
+    const safeTitle = title.replace(/[<>;"'&]/g, '');
+
+    const result = await query(
+      'UPDATE songs SET title = $1, cover_path = COALESCE($2, cover_path) WHERE id = $3 AND user_id = $4 RETURNING *',
+      [safeTitle, cover_path || null, songId, user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Canción no encontrada' });
+    }
+
+    res.json({ song: result.rows[0] });
+  } catch (error) {
+    console.error('Update error:', error);
+    res.status(500).json({ error: 'Error al actualizar la canción' });
   }
 });
 

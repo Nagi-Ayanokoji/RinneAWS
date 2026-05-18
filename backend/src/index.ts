@@ -11,6 +11,8 @@ import { pool, testConnection } from './config/database';
 import authRoutes from './routes/auth.routes';
 import songsRoutes from './routes/songs.routes';
 import preferencesRoutes from './routes/preferences.routes';
+import playlistsRoutes from './routes/playlists.routes';
+import uploadRoutes from './routes/upload.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,6 +27,9 @@ if (!fs.existsSync(path.join(uploadDir, 'songs'))) {
 }
 if (!fs.existsSync(path.join(uploadDir, 'covers'))) {
   fs.mkdirSync(path.join(uploadDir, 'covers'), { recursive: true });
+}
+if (!fs.existsSync(path.join(uploadDir, 'images'))) {
+  fs.mkdirSync(path.join(uploadDir, 'images'), { recursive: true });
 }
 
 // Middleware
@@ -46,6 +51,8 @@ app.use('/uploads', express.static(path.resolve(uploadDir)));
 app.use('/api/auth', authRoutes);
 app.use('/api/songs', songsRoutes);
 app.use('/api/preferences', preferencesRoutes);
+app.use('/api/playlists', playlistsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

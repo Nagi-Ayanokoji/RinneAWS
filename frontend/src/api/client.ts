@@ -22,3 +22,12 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const getImageUrl = (path: string | null | undefined) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:')) {
+    return path;
+  }
+  return `http://localhost:3001${path.startsWith('/') ? '' : '/'}${path}`;
+};
+

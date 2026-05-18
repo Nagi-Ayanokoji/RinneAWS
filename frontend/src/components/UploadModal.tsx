@@ -5,10 +5,10 @@ import { api } from '../api/client';
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUploadComplete: () => void;
+  onSuccess: () => void;
 }
 
-export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalProps) {
+export function UploadModal({ isOpen, onClose, onSuccess }: UploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
@@ -36,7 +36,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
           setProgress(percentCompleted);
         }
       });
-      onUploadComplete();
+      onSuccess();
       onClose();
       // Reset state
       setFile(null);
@@ -73,7 +73,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
           >
             <input 
               type="file" 
-              accept="audio/*"
+              accept="audio/*,video/mp4"
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
               required
@@ -87,7 +87,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
               <div className="flex flex-col items-center gap-2 text-on-surface-variant">
                 <UploadCloud className="w-8 h-8" />
                 <span className="font-label-sm text-sm">Drag and drop or click to browse</span>
-                <span className="text-xs opacity-50">MP3, WAV, FLAC, OGG up to 50MB</span>
+                <span className="text-xs opacity-50">MP3, WAV, FLAC, OGG, MP4 up to 50MB</span>
               </div>
             )}
           </div>

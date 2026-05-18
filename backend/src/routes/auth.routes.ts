@@ -40,7 +40,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Create user
     const result = await query(
-      'INSERT INTO users (email, password_hash, username) VALUES ($1, $2, $3) RETURNING id, email, username, created_at',
+      'INSERT INTO users (email, password_hash, username) VALUES ($1, $2, $3) RETURNING id, email, username, avatar_url, created_at',
       [email, passwordHash, username || email.split('@')[0]]
     );
 
@@ -48,7 +48,7 @@ router.post('/register', async (req: Request, res: Response) => {
     const { token } = generateToken(user.id);
 
     res.status(201).json({
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, avatar_url: user.avatar_url },
       token,
     });
   } catch (error) {
@@ -69,7 +69,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Find user
     const result = await query(
-      'SELECT id, email, username, password_hash, created_at FROM users WHERE email = $1',
+      'SELECT id, email, username, avatar_url, password_hash, created_at FROM users WHERE email = $1',
       [email]
     );
 
@@ -88,7 +88,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const { token } = generateToken(user.id);
 
     res.json({
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, avatar_url: user.avatar_url },
       token,
     });
   } catch (error) {
@@ -120,6 +120,30 @@ router.post('/logout', authenticate, async (req: Request, res: Response) => {
 router.get('/me', authenticate, async (req: Request, res: Response) => {
   const user = (req as AuthRequest).user;
   res.json({ user });
+});
+
+// PUT /api/auth/profile
+router.put('/profile', authenticate, async (req: Request, res: Response) => {
+  try {
+    const user = (req as AuthRequest).user!;
+    const { username, avatar_url } = req.body;
+    
+    if (!username) {
+      return res.status(400).json({ error: 'Username es requerido' });
+    }
+
+    const safeUsername = username.replace(/[<>;"'&]/g, '');
+
+    const result = await query(
+      'UPDATE users SET username = $1, avatar_url = $2 WHERE id = $3 RETURNING id, email, username, avatar_url, created_at',
+      [safeUsername, avatar_url || null, user.id]
+    );
+
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Error al actualizar perfil' });
+  }
 });
 
 export default router;
