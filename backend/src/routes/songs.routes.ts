@@ -78,35 +78,38 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/songs/upload - Upload a song
-router.post('/upload', authenticate, upload.single('audio'), async (req: Request, res: Response) => {
+// POST /api/songs/upload - Upload one or more songs
+router.post('/upload', authenticate, upload.array('audio', 20), async (req: Request, res: Response) => {
   try {
     const user = (req as AuthRequest).user!;
-    const file = req.file;
+    const files = req.files as Express.Multer.File[];
 
-    if (!file) {
+    if (!files || files.length === 0) {
       return res.status(400).json({ error: 'No se proporcionó archivo de audio' });
     }
 
-    const title = req.body.title || path.parse(file.originalname).name;
     const artist = req.body.artist || 'Unknown Artist';
     const album = req.body.album || 'Unknown Album';
-
-    // Sanitize inputs for safety (ADR-011)
-    const safeTitle = title.replace(/[<>;"'&]/g, '');
     const safeArtist = artist.replace(/[<>;"'&]/g, '');
     const safeAlbum = album.replace(/[<>;"'&]/g, '');
 
-    const filePath = `/uploads/songs/${file.filename}`;
+    const insertedSongs = [];
 
-    const result = await query(
-      `INSERT INTO songs (user_id, title, artist, album, duration_seconds, file_path, file_size, mime_type)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING *`,
-      [user.id, safeTitle, safeArtist, safeAlbum, 0, filePath, file.size, file.mimetype]
-    );
+    for (const file of files) {
+      const title = path.parse(file.originalname).name;
+      const safeTitle = title.replace(/[<>;"'&]/g, '');
+      const filePath = `/uploads/songs/${file.filename}`;
 
-    res.status(201).json({ song: result.rows[0] });
+      const result = await query(
+        `INSERT INTO songs (user_id, title, artist, album, duration_seconds, file_path, file_size, mime_type)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
+        [user.id, safeTitle, safeArtist, safeAlbum, 0, filePath, file.size, file.mimetype]
+      );
+      insertedSongs.push(result.rows[0]);
+    }
+
+    res.status(201).json({ songs: insertedSongs });
   } catch (error: any) {
     console.error('Upload error:', error);
     if (error.message?.includes('Formato no compatible')) {

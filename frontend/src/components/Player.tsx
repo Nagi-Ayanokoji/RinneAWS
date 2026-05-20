@@ -1,9 +1,10 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { Howl } from 'howler';
-import { SkipBack, SkipForward, Play, Pause, Settings as SettingsIcon, Volume2 } from 'lucide-react';
+import { SkipBack, SkipForward, Play, Pause, Settings as SettingsIcon, Volume2, Heart } from 'lucide-react';
 import { usePlayerStore } from '../stores/playerStore';
 import { useAuthStore } from '../stores/authStore';
 import { usePreferencesStore } from '../stores/preferencesStore';
+import { api } from '../api/client';
 
 export function Player() {
   const { 
@@ -26,6 +27,30 @@ export function Player() {
   const song = currentSong();
   const setIsBackgroundSettingsOpen = usePreferencesStore((state) => state.setIsBackgroundSettingsOpen);
   const hudColor = usePreferencesStore((state) => state.preferences.hud_color);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Check favorite status when song changes
+  useEffect(() => {
+    if (!song) { setIsFavorite(false); return; }
+    api.get(`/favorites/check/${song.id}`)
+      .then(res => setIsFavorite(res.data.isFavorite))
+      .catch(() => setIsFavorite(false));
+  }, [song?.id]);
+
+  const toggleFavorite = async () => {
+    if (!song) return;
+    try {
+      if (isFavorite) {
+        await api.delete(`/favorites/${song.id}`);
+        setIsFavorite(false);
+      } else {
+        await api.post(`/favorites/${song.id}`);
+        setIsFavorite(true);
+      }
+    } catch (err) {
+      console.error('Favorite toggle error:', err);
+    }
+  };
 
   // Clear progress interval
   const clearProgressInterval = useCallback(() => {
@@ -166,6 +191,13 @@ export function Player() {
             <p className="font-body-lg text-lg mt-2 truncate" style={{ color: hudColor }}>{song?.artist || '-'}</p>
           </div>
           <div className="flex items-center gap-4 shrink-0">
+             <button 
+               onClick={toggleFavorite}
+               className={`p-2 rounded-full transition-all hover:scale-110 ${isFavorite ? 'text-red-400' : 'text-on-surface-variant hover:text-red-400'}`}
+               title={isFavorite ? 'Quitar de favoritas' : 'Agregar a favoritas'}
+             >
+               <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
+             </button>
              <div className="flex items-center gap-2 group relative">
                 <Volume2 className="w-5 h-5 text-on-surface-variant group-hover:text-primary" />
                 <input 

@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.routes';
 import songsRoutes from './routes/songs.routes';
 import preferencesRoutes from './routes/preferences.routes';
 import playlistsRoutes from './routes/playlists.routes';
+import favoritesRoutes from './routes/favorites.routes';
 import uploadRoutes from './routes/upload.routes';
 
 const app = express();
@@ -52,6 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/songs', songsRoutes);
 app.use('/api/preferences', preferencesRoutes);
 app.use('/api/playlists', playlistsRoutes);
+app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Health check

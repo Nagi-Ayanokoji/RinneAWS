@@ -85,6 +85,19 @@ CREATE TABLE playlist_songs (
 );
 
 -- ============================================
+-- Favorites table
+-- ============================================
+CREATE TABLE favorites (
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  song_id UUID NOT NULL REFERENCES songs(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (user_id, song_id)
+);
+
+CREATE INDEX idx_favorites_user_id ON favorites(user_id);
+
+
+-- ============================================
 -- Revoked tokens table (for logout)
 -- ============================================
 CREATE TABLE revoked_tokens (

@@ -8,8 +8,8 @@ import { getImageUrl } from '../api/client';
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  activeTab: 'library' | 'playlists';
-  setActiveTab: (tab: 'library' | 'playlists') => void;
+  activeTab: 'library' | 'playlists' | 'favorites';
+  setActiveTab: (tab: 'library' | 'playlists' | 'favorites') => void;
 }
 
 export function Sidebar({ sidebarOpen, setSidebarOpen, activeTab, setActiveTab }: SidebarProps) {
@@ -61,6 +61,13 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, activeTab, setActiveTab }
           >
             <ListMusic className="w-6 h-6 shrink-0" />
             {sidebarOpen && <span>Playlist</span>}
+          </button>
+          <button 
+            onClick={() => setActiveTab('favorites')}
+            className={`${sidebarOpen ? 'gap-3' : 'justify-center'} flex items-center p-3 rounded-lg transition-all w-full text-left ${activeTab === 'favorites' ? 'bg-primary/10 text-primary border-l-4 border-primary shadow-[0_0_15px_rgba(0,219,233,0.2)] translate-x-1' : 'text-on-surface-variant hover:bg-white/5 hover:text-primary'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 shrink-0"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            {sidebarOpen && <span>Favoritas</span>}
           </button>
           <button onClick={() => setIsHudOpen(true)} className={`${sidebarOpen ? 'gap-3' : 'justify-center'} flex items-center p-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all w-full`}>
             <Settings className="w-6 h-6" />

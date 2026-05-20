@@ -98,8 +98,8 @@ export function Playlists({ libraryOpen }: PlaylistsProps) {
   // ──────────────────────────────────────────
   if (selectedPlaylist && libraryOpen) {
     return (
-      <section className="w-full md:w-1/3 shrink-0 p-6 h-full flex flex-col gap-6 z-10 glass-panel border-r border-white/10 overflow-y-auto overflow-x-hidden transition-all duration-300">
-        <div className="flex items-center gap-3 w-full">
+      <section className="w-full md:w-[450px] md:max-w-[40%] shrink-0 p-6 h-full flex flex-col gap-6 z-10 glass-panel border-r border-white/10 overflow-y-auto overflow-x-hidden transition-all duration-300">
+        <div className="flex items-center gap-3 w-full shrink-0">
           <button 
             onClick={() => setSelectedPlaylist(null)}
             className="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-white/5"
@@ -181,8 +181,8 @@ export function Playlists({ libraryOpen }: PlaylistsProps) {
   // Playlist list view
   // ──────────────────────────────────────────
   return (
-    <section className={`${libraryOpen ? 'w-full md:w-1/3 shrink-0 p-6' : 'hidden md:flex w-20 shrink-0 p-4 items-center'} h-full flex flex-col gap-6 z-10 glass-panel border-r-0 md:border-r border-white/10 overflow-x-hidden overflow-y-auto transition-all duration-300`}>
-      <div className={`${libraryOpen ? 'justify-between' : 'justify-center'} flex items-center w-full`}>
+    <section className={`${libraryOpen ? 'w-full md:w-[450px] md:max-w-[40%] shrink-0 p-6' : 'hidden md:flex w-20 shrink-0 p-4 items-center'} h-full flex flex-col gap-6 z-10 glass-panel border-r-0 md:border-r border-white/10 overflow-x-hidden overflow-y-auto transition-all duration-300`}>
+      <div className={`${libraryOpen ? 'justify-between' : 'justify-center'} flex items-center w-full shrink-0`}>
         {libraryOpen && <h2 className="font-headline-md text-2xl text-on-surface">Playlists</h2>}
         {libraryOpen && (
           <button 

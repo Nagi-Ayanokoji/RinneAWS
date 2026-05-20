@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { Library } from '../components/Library';
 import { Playlists } from '../components/Playlists';
+import { Favorites } from '../components/Favorites';
 import { Player } from '../components/Player';
 import { Menu, Settings } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
@@ -14,7 +15,7 @@ import { getImageUrl } from '../api/client';
 export function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [libraryOpen, setLibraryOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState<'library' | 'playlists'>('library');
+  const [activeTab, setActiveTab] = useState<'library' | 'playlists' | 'favorites'>('library');
   const user = useAuthStore((state) => state.user);
   const { preferences, fetchPreferences, setIsBackgroundSettingsOpen } = usePreferencesStore();
 
@@ -80,10 +81,14 @@ export function DashboardPage() {
       />
 
       <main className={`${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} flex-1 ml-0 relative h-screen flex flex-col md:flex-row transition-all duration-300`}>
-        {activeTab === 'library' ? (
+        {activeTab === 'library' && (
           <Library libraryOpen={libraryOpen} setLibraryOpen={setLibraryOpen} />
-        ) : (
+        )}
+        {activeTab === 'playlists' && (
           <Playlists libraryOpen={libraryOpen} />
+        )}
+        {activeTab === 'favorites' && (
+          <Favorites libraryOpen={libraryOpen} />
         )}
         <Player />
       </main>

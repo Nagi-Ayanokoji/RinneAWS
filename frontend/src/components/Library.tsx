@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, ChevronLeft, ChevronRight, Music as MusicIcon, Search, Trash2, Edit2, ArrowUpDown } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Music as MusicIcon, Search, Trash2, Edit2, ArrowUpDown, Heart } from 'lucide-react';
 import { api, getImageUrl } from '../api/client';
 import { usePlayerStore, type Song } from '../stores/playerStore';
 import { UploadModal } from './UploadModal';
@@ -20,8 +20,19 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
   const [songToAdd, setSongToAdd] = useState<Song | null>(null);
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'duration'>('date');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   const { playSong, setQueue, currentIndex } = usePlayerStore();
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await api.get('/favorites');
+      const ids = new Set<string>(res.data.songs.map((s: Song) => s.id));
+      setFavoriteIds(ids);
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+    }
+  };
 
   const fetchSongs = async () => {
     try {
@@ -36,6 +47,25 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
   useEffect(() => {
     fetchSongs();
   }, [search]);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+
+  const toggleFavorite = async (e: React.MouseEvent, songId: string) => {
+    e.stopPropagation();
+    try {
+      if (favoriteIds.has(songId)) {
+        await api.delete(`/favorites/${songId}`);
+        setFavoriteIds(prev => { const n = new Set(prev); n.delete(songId); return n; });
+      } else {
+        await api.post(`/favorites/${songId}`);
+        setFavoriteIds(prev => new Set(prev).add(songId));
+      }
+    } catch (err) {
+      console.error('Favorite toggle error:', err);
+    }
+  };
 
   const handleDeleteClick = (e: React.MouseEvent, song: Song) => {
     e.stopPropagation();
@@ -73,8 +103,8 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
   }, [songs, sortBy]);
 
   return (
-    <section className={`${libraryOpen ? 'w-full md:w-1/3 shrink-0' : 'hidden md:flex w-full md:w-20 p-4 items-center'} h-full flex flex-col gap-6 z-10 glass-panel border-r-0 md:border-r border-white/10 overflow-x-hidden overflow-y-auto transition-all duration-300`}>
-      <div className={`${libraryOpen ? 'justify-between p-6 pb-0' : 'justify-center'} flex items-center w-full`}>
+    <section className={`${libraryOpen ? 'w-full md:w-[450px] md:max-w-[40%] shrink-0' : 'hidden md:flex w-full md:w-20 p-4 items-center'} h-full flex flex-col gap-6 z-10 glass-panel border-r-0 md:border-r border-white/10 overflow-x-hidden overflow-y-auto transition-all duration-300`}>
+      <div className={`${libraryOpen ? 'justify-between p-6 pb-0' : 'justify-center'} flex items-center w-full shrink-0`}>
         {libraryOpen && <h2 className="font-headline-md text-2xl text-on-surface">Library</h2>}
         <div className="flex items-center gap-2">
           {libraryOpen && (
@@ -147,6 +177,13 @@ export function Library({ libraryOpen, setLibraryOpen }: LibraryProps) {
                   <p className="font-label-sm text-[12px] text-on-surface-variant truncate">{song.artist}</p>
                 </div>
                 <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 transition-all shrink-0">
+                  <button 
+                    onClick={(e) => toggleFavorite(e, song.id)}
+                    className={`p-1 transition-all ${favoriteIds.has(song.id) ? 'text-red-400' : 'text-on-surface-variant hover:text-red-400'}`}
+                    title={favoriteIds.has(song.id) ? 'Quitar de favoritas' : 'Agregar a favoritas'}
+                  >
+                    <Heart className={`w-4 h-4 ${favoriteIds.has(song.id) ? 'fill-current' : ''}`} />
+                  </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setSongToAdd(song); }}
                     className="p-1 text-on-surface-variant hover:text-primary transition-all"
