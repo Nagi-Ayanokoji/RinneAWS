@@ -6,24 +6,41 @@
 
 ---
 
-## Story Map
+## Story Map Visual e Interactivo (Mapa de Ruta)
 
+```mermaid
+flowchart TB
+    subgraph Epic1["ÉPICA 1: Autenticación"]
+        Act1["Actividad: Gestión de Cuenta"] --> Must1["MUST (Backbone)<br>• HU-001: Crear Cuenta<br>• HU-002: Iniciar Sesión<br>• HU-003: Cerrar Sesión"]
+        Must1 --> Should1["SHOULD (Walking Skeleton)<br>• CA-002-03: Recordar Sesión<br>• CA-002-04: Redirección Protegida"]
+        Should1 --> Could1["COULD (Enriquecimiento)<br>• HU-015: Recuperar Contraseña"]
+    end
+    subgraph Epic2["ÉPICA 2: Biblioteca"]
+        Act2["Actividad: Gestión Canciones"] --> Must2["MUST (Backbone)<br>• HU-004: Subir Canción<br>• HU-005: Ver Biblioteca<br>• HU-006: Eliminar Canción"]
+        Must2 --> Should2["SHOULD (Walking Skeleton)<br>• CA-004-01: Extraer Metadatos<br>• HU-007: Buscar Canción"]
+        Should2 --> Could2["COULD (Enriquecimiento)<br>• Ordenar y Filtrar Lista"]
+    end
+    subgraph Epic3["ÉPICA 3: Reproductor"]
+        Act3["Actividad: Control Playback"] --> Must3["MUST (Backbone)<br>• HU-008: Reproducir Audio<br>• CA-008-02: Pausar/Resumir<br>• HU-009: Control Volumen"]
+        Must3 --> Should3["SHOULD (Walking Skeleton)<br>• HU-010: Cola de Música<br>• CA-010-02: Siguiente/Anterior"]
+        Should3 --> Could3["COULD (Enriquecimiento)<br>• HU-011: Barra Progreso (Scrubbing)<br>• Modo Aleatorio y Repetir"]
+    end
+    subgraph Epic4["ÉPICA 4: Personalización"]
+        Act4["Actividad: Apariencia HUD"] --> Must4["MUST (Backbone)<br>• HU-012: Cambiar Color HUD<br>• HU-013: Cambiar Fondo"]
+        Must4 --> Should4["SHOULD (Walking Skeleton)<br>• CA-012-02: Persistir Configuración en DB"]
+        Should4 --> Could4["COULD (Enriquecimiento)<br>• Configurar Partículas<br>• HU-014: Temas Visuales Predefinidos"]
+    end
 ```
-ÉPICAS            │ Registro/Login    │ Biblioteca        │ Reproductor       │ Personalización
-──────────────────┼───────────────────┼───────────────────┼───────────────────┼──────────────────
-ACTIVIDADES       │ Gestión de cuenta │ Gestión canciones │ Control playback  │ Apariencia HUD
-──────────────────┼───────────────────┼───────────────────┼───────────────────┼──────────────────
-BACKBONE          │ Crear cuenta      │ Subir canción     │ Reproducir        │ Cambiar color
-(must have)       │ Iniciar sesión    │ Ver biblioteca    │ Pausar / resumir  │ Cambiar fondo
-                  │ Cerrar sesión     │ Eliminar canción  │ Control volumen   │
-──────────────────┼───────────────────┼───────────────────┼───────────────────┼──────────────────
-WALKING SKELETON  │ Validar email     │ Metadatos auto    │ Cola de música    │ Persistir config
-(should have)     │ Recordar sesión   │ Buscar canción    │ Siguiente/Anterior│
-──────────────────┼───────────────────┼───────────────────┼───────────────────┼──────────────────
-ENRIQUECIMIENTO   │ Recuperar pass    │ Ordenar/filtrar   │ Barra de progreso │ Portada canción
-(could have)      │                   │ Portada manual    │ Modo aleatorio    │ Temas predefinidos
-──────────────────┴───────────────────┴───────────────────┴───────────────────┴──────────────────
-```
+
+---
+
+## Plan de Lanzamientos (Release Plan)
+
+| Sprint / Release | Nivel de Entrega | Historias de Usuario Incluidas | Criterio de Valor / Objetivo del Release |
+|---|---|---|---|
+| **Sprint 1** | **Walking Skeleton (Pre-alfa)** | HU-001, HU-002, HU-003, HU-015 | **Autenticación e Identidad:** Proporcionar un portal de registro y acceso seguro cifrado con persistencia de tokens para segregar las bibliotecas de música de forma aislada. |
+| **Sprint 2** | **Core Product (Alfa)** | HU-004, HU-005, HU-006, HU-008, HU-009 | **Biblioteca Básica y Playback:** Permitir la subida física de canciones, lectura automática de metadatos multimedia y reproducción interactiva estable mediante streaming de rangos. |
+| **Sprint 3** | **Enriched Product (Beta)** | HU-007, HU-010, HU-011, HU-012, HU-013, HU-014 | **Interactividad y HUD Estético:** Proporcionar filtros de búsqueda rápidos, control dinámico de la cola, y habilitar la personalización visual en tiempo de ejecución del HUD y los fondos del reproductor. |
 
 ---
 
@@ -409,13 +426,67 @@ ENRIQUECIMIENTO   │ Recuperar pass    │ Ordenar/filtrar   │ Barra de progr
 
 ---
 
+### HU-014 — Temas visuales predefinidos
+
+**Como** usuario autenticado,  
+**quiero** seleccionar entre una lista de temas visuales predefinidos (ej. Cyberpunk, Vaporwave, Minimalist Dark),  
+**para** cambiar instantáneamente la apariencia completa de la aplicación (HUD, fondo y partículas) con un solo clic.
+
+**Prioridad:** Could Have | **Estimación:** 5 puntos | **Sprint:** 3
+
+#### Criterios de Aceptación
+
+**CA-014-01:** Selección y aplicación instantánea
+- **Dado que** estoy en la galería de temas predefinidos,
+- **cuando** selecciono un tema (ej. "Cyberpunk"),
+- **entonces** el sistema cambia en runtime el color del acento a #00f0ff (cyan), la imagen de fondo a un paisaje futurista retro, y activa partículas tipo "neon lines" de forma automática.
+
+**CA-014-02:** Persistencia del tema
+- **Dado que** he seleccionado y guardado un tema visual,
+- **cuando** cierro sesión e inicio nuevamente,
+- **entonces** la interfaz carga por defecto la paleta y configuración completa de dicho tema.
+
+**CA-014-03:** Restablecer por defecto
+- **Dado que** tengo un tema activo y deseo volver al original,
+- **cuando** hago clic en "Restablecer por defecto",
+- **entonces** la app vuelve a los valores predeterminados (Fondo gris sólido, HUD color rojo Rin'ne, sin partículas).
+
+---
+
+### HU-015 — Recuperación de contraseña
+
+**Como** usuario registrado que ha olvidado su clave,  
+**quiero** ingresar mi correo electrónico para recibir un enlace o token temporal de restablecimiento,  
+**para** recuperar el acceso a mi biblioteca musical personal de forma segura.
+
+**Prioridad:** Could Have | **Estimación:** 8 puntos | **Sprint:** 1
+
+#### Criterios de Aceptación
+
+**CA-015-01:** Envío de correo de recuperación exitoso
+- **Dado que** he olvidado mi contraseña y estoy en el portal de recuperación,
+- **cuando** ingreso mi correo registrado y hago clic en "Recuperar",
+- **entonces** el sistema genera un token JWT temporal y me envía un correo electrónico ficticio/simulado con un enlace seguro para reestablecer la clave.
+
+**CA-015-02:** Correo no registrado
+- **Dado que** ingreso un correo electrónico que no existe en el sistema,
+- **cuando** envío la solicitud,
+- **entonces** el sistema muestra "Correo no registrado" para evitar fugas de información.
+
+**CA-015-03:** Expiración del token
+- **Dado que** recibí el token de recuperación,
+- **cuando** intento usar el enlace después de 1 hora,
+- **entonces** el sistema rechaza el restablecimiento indicando "El token de recuperación ha expirado. Solicita uno nuevo".
+
+---
+
 ## Resumen de Story Map por Sprint
 
 | Sprint | HUs | Funcionalidad |
 |--------|-----|---------------|
-| Sprint 1 | HU-001, HU-002, HU-003 | Autenticación completa |
-| Sprint 2 | HU-004, HU-005, HU-006, HU-008, HU-009 | Biblioteca básica + Reproductor esencial |
-| Sprint 3 | HU-007, HU-010, HU-011, HU-012, HU-013 | Búsqueda + Cola + Progreso + Personalización |
+| Sprint 1 | HU-001, HU-002, HU-003, HU-015 | Autenticación completa y recuperación de accesos. |
+| Sprint 2 | HU-004, HU-005, HU-006, HU-008, HU-009 | Biblioteca básica + Reproductor esencial de streaming. |
+| Sprint 3 | HU-007, HU-010, HU-011, HU-012, HU-013, HU-014 | Búsqueda + Cola + Progreso + Temas y Personalización. |
 
 ---
 

@@ -189,19 +189,28 @@ Usar **Passport.js 0.7** con estrategia **JWT (jsonwebtoken 9.0)** para autentic
 El sistema necesita almacenar: usuarios, metadatos de canciones (título, artista, duración, ruta S3, portada), configuración de HUD por usuario, y lista de tokens revocados. Se requiere consistencia transaccional para los metadatos.
 
 ### Decisión
-Usar **PostgreSQL 15** para datos relacionales y **Redis 7.2** para caché y revocación de tokens. Redis es opcional en fase inicial (se puede usar memoria local).
+Usar **PostgreSQL 15** para datos relacionales y **Redis 7.2** para caché y revocación de tokens. 
+*Nota de Arquitectura Cloud:* Para alinearse con las restricciones de costo de la capa gratuita, **se difiere el uso de AWS ElastiCache** en producción académica. En su lugar, Redis se ejecuta como un contenedor Docker local dentro de la misma instancia EC2 o se utiliza caché en memoria RAM en Node.js, eliminando cualquier costo de infraestructura adicional mientras se mantiene la compatibilidad de API.
 
 ### Justificación
 - PostgreSQL ofrece ACID completo, ideal para metadatos de canciones y relaciones usuario-canción.
 - Soporte nativo para JSONB permite almacenar configuraciones de HUD flexibles sin migraciones frecuentes.
 - Redis elimina consultas repetidas a PostgreSQL para datos de sesión y lista negra de JWTs.
-- AWS RDS y ElastiCache ofrecen gestión administrada de ambas tecnologías.
+- **Análisis de Costos:** AWS ElastiCache (`cache.t3.micro`) no cuenta con capa gratuita y cuesta ~$12 USD/mes. Diferir este servicio y correr Redis localmente en Docker dentro de EC2 reduce este costo a **$0 USD**.
 
 ### Consecuencias
-- ✅ Consistencia garantizada para operaciones críticas.
-- ✅ Redis acelera autenticación y reduce carga en RDS.
-- ⚠️ Dos servicios de base de datos incrementan complejidad operacional.
-- ⚠️ ElastiCache no tiene free tier; se puede iniciar sin Redis.
+- ✅ Consistencia garantizada para operaciones críticas sin incurrir en costos.
+- ✅ Redis acelera autenticación y reduce carga en la base de datos PostgreSQL.
+- ⚠️ Ejecutar Redis en la misma instancia EC2 consume parte de la memoria RAM disponible (1GB en t2.micro), lo cual se mitiga limitando la memoria máxima de Redis a 128MB.
+- ❌ AWS ElastiCache queda diferido para futuras fases de escalabilidad masiva comercial.
+
+### Análisis Comparativo de Costes Reales (Base de Datos)
+| Opción Evaluada | Costo en Desarrollo (Free Tier) | Costo Mensual Proyectado (Post-Free Tier / Producción) |
+|---|---|---|
+| PostgreSQL (Local Docker en EC2) | $0 USD | $0 USD (Compartido con EC2) |
+| PostgreSQL (AWS RDS db.t3.micro) | $0 USD (750 h/mes) | ~$15 USD/mes |
+| Redis (Docker local en EC2) | $0 USD | $0 USD (Compartido con EC2) |
+| Redis (AWS ElastiCache) | No aplica (Sin Free Tier) | ~$12 USD/mes |
 
 ### Esquema inicial (PostgreSQL)
 ```sql
@@ -267,8 +276,15 @@ rinne/
 ### Consecuencias
 - ✅ Escalabilidad ilimitada sin gestión de disco.
 - ✅ Costo proporcional al uso ($0.023/GB después del free tier).
-- ⚠️ Sin límite de canciones por usuario, el costo puede crecer sin control en producción real.
+- ⚠️ Sin límite de canciones por usuario, el costo puede crecer sin control en producción real si no se aplican cuotas por usuario.
 - ❌ Latencia de primera conexión mayor que almacenamiento local.
+
+### Análisis Comparativo de Costes Reales (Almacenamiento)
+| Servicio Evaluado | Costo en Desarrollo (Free Tier) | Costo Proyectado (50GB de canciones) | Costo Proyectado (500GB de canciones) |
+|---|---|---|---|
+| Almacenamiento Local (EC2 EBS 8GB) | $0 USD (Incluido en Free Tier) | No aplica (Límite físico de disco) | No aplica (Límite físico de disco) |
+| Amazon S3 Standard Storage | $0 USD (Hasta 5GB) | ~$1.15 USD/mes ($0.023/GB) | ~$11.50 USD/mes ($0.023/GB) |
+| Amazon S3 One Zone-IA (Infrequent) | No aplica (Sin Free Tier) | ~$0.50 USD/mes ($0.010/GB) | ~$5.00 USD/mes ($0.010/GB) |
 
 ---
 
@@ -281,30 +297,38 @@ rinne/
 El proyecto es universitario con presupuesto mínimo. Se requiere despliegue en nube real (no local). La aplicación no tiene requerimientos de alta disponibilidad críticos en esta fase.
 
 ### Decisión
-Desplegar el backend en **EC2 t2.micro** (free tier) en lugar de ECS/Fargate, y usar **RDS db.t2.micro** para PostgreSQL.
+Desplegar el backend en **EC2 t2.micro** (free tier) en lugar de ECS/Fargate, y usar **RDS db.t3.micro** para PostgreSQL.
+*Nota de Consistencia:* En concordancia con la arquitectura real implementada y los costes evaluados, **se elimina ElastiCache (Redis) administrado de AWS** de la infraestructura final de despliegue. Redis se ejecuta en un contenedor local o se maneja en caché interna, evitando un cargo no cubierto por la capa gratuita.
 
 ### Justificación
 - EC2 t2.micro: 750 horas/mes gratuitas durante 12 meses (suficiente para desarrollo y demos).
-- RDS db.t2.micro: 750 horas/mes gratuitas (free tier PostgreSQL).
+- RDS db.t3.micro: 750 horas/mes gratuitas (free tier PostgreSQL).
 - Docker se ejecuta sobre EC2 t2.micro para mantener portabilidad.
 - CloudFront + S3 para el frontend estático (sin costo significativo).
 
-### Arquitectura desplegada
+### Arquitectura Desplegada Real (Producción Académica)
 ```
 Internet
   └── CloudFront (CDN)
         ├── S3 (Frontend React build)
         └── EC2 t2.micro (Backend Node.js + Docker)
-              ├── RDS PostgreSQL (db.t2.micro)
-              ├── ElastiCache Redis (opcional / diferido)
-              └── S3 (Canciones y portadas)
+              ├── RDS PostgreSQL (db.t3.micro) (Base de Datos Relacional)
+              └── S3 (Almacenamiento de Canciones y portadas)
 ```
 
 ### Consecuencias
-- ✅ Costo ~$0 durante el año de free tier.
-- ✅ Experiencia real con AWS sin costo inicial.
-- ⚠️ t2.micro (1 vCPU, 1 GB RAM) puede saturarse con uploads concurrentes.
-- ❌ Sin auto-scaling en esta fase; suficiente para demos universitarias.
+- ✅ Costo de $0 USD durante el año de Free Tier.
+- ✅ Experiencia real con servicios Core de AWS (EC2, RDS, S3, IAM, CloudWatch).
+- ⚠️ La instancia t2.micro (1 vCPU, 1 GB RAM) puede saturarse ante subidas masivas concurrentes. Se limita a subidas síncronas controladas.
+- ❌ Sin auto-scaling ni balanceo de carga en esta fase; suficiente para el alcance académico.
+
+### Análisis Comparativo de Costes Reales (Cómputo e Infraestructura)
+| Componente Evaluado | Opción Free Tier | Opción Comercial / Producción | Costo Mensual Proyectado |
+|---|---|---|---|
+| Servidor Web / API | EC2 t2.micro (750 h/mes gratis) | EC2 t3.small (2 vCPU, 2GB RAM) | ~$15.00 USD/mes |
+| Base de Datos Relacional | RDS db.t3.micro (750 h/mes gratis) | RDS db.t3.medium (Multi-AZ) | ~$35.00 USD/mes |
+| Balanceador de Carga | Nginx local en EC2 ($0 USD) | AWS ALB (Application Load Balancer) | ~$22.00 USD/mes |
+| Certificado SSL | Let's Encrypt / Certbot ($0 USD) | AWS ACM ($0 USD, requiere ALB) | $0 USD |
 
 ---
 
@@ -384,6 +408,58 @@ Se ha realizado una revisión de seguridad exhaustiva del stack tecnológico deb
 - ✅ Mitigación directa de vulnerabilidades conocidas (DoS, Command Injection).
 - ✅ Mayor estabilidad en la gestión de dependencias con pnpm.
 - ⚠️ Requiere estricta revisión de código en la validación de JWT y en la construcción de comandos para ffmpeg.
+
+---
+
+## C4 Nivel 4 — Vista de Código (Arquitectura de Software)
+
+### Arquitectura de Capas del Backend (Express + TS)
+
+El backend de Rin'ne adopta el patrón arquitectónico de **Separación de Concernimientos (SoC)** y **Capas desacopladas** para garantizar escalabilidad, facilidad de pruebas e independencia del motor de base de datos.
+
+```
+src/
+├── config/         # Configuraciones globales (base de datos, pasaportes, S3)
+├── controllers/    # Controladores: Orquestación de peticiones y respuestas HTTP
+├── routes/         # Enrutadores: Definición de rutas y mapeo de middlewares
+├── middleware/     # Interceptores: Autenticación, validación de schemas y archivos
+├── services/       # Servicios de negocio: Lógica de procesamiento (FFmpeg, uploads)
+├── database/       # Consultas y queries crudos a PostgreSQL
+├── utils/          # Utilidades comunes y helpers
+└── app.ts          # Inicializador de la aplicación Express
+```
+
+#### Flujo de Ejecución (Nivel Código)
+```
+Cliente HTTP ──> Route (endpoint) ──> Auth Middleware (JWT) ──> Controller ──> Service (FFmpeg/S3) ──> Database (Query) ──> Client (JSON)
+```
+
+1. **Rutas (`routes/`):** Definen los endpoints expuestos (ej. `POST /api/songs/upload`). Aplican filtros middleware de Passport JWT para verificar autenticidad.
+2. **Controladores (`controllers/`):** Capturan el payload del request, delegan la lógica de negocio al servicio correspondiente, y formatean la respuesta HTTP (ej. `res.status(201).json(...)`).
+3. **Servicios (`services/`):** Contienen la lógica algorítmica pesada, como interactuar con el SDK de AWS o ejecutar procesos hijos de FFmpeg para extraer metadatos.
+4. **Base de Datos (`database/`):** Encapsula todas las sentencias SQL parametrizadas a PostgreSQL utilizando la librería de conexión `pg` o query builders.
+
+---
+
+### Arquitectura del Frontend (React + Zustand)
+
+El frontend sigue un flujo de datos **unidireccional y reactivo** estructurado en componentes modulares y tiendas globales reactivas.
+
+```
+src/
+├── api/            # Cliente Axios configurado con interceptores de JWT
+├── assets/         # Recursos estáticos (imágenes, logos, SVGs)
+├── components/     # Componentes visuales y de HUD (Player, Sidebar, UploadModal)
+├── pages/          # Vistas de página principales (LoginPage, DashboardPage)
+├── stores/         # Stores de Zustand (authStore, playerStore, preferencesStore)
+├── index.css       # Estilos globales y variables CSS dinámicas del HUD
+└── main.tsx        # Punto de entrada de la aplicación React
+```
+
+#### Gestión del Estado Reactivo (Zustand Stores)
+* **`authStore.ts`:** Almacena el token JWT del usuario actual, el estado de sesión (`isAuthenticated`), y maneja llamadas de registro, login y logout.
+* **`playerStore.ts`:** Orquesta la instancia global de **Howler.js**, controlando la cola activa de reproducción, pista en ejecución, volumen, progreso actual y estados de playback (playing, paused).
+* **`preferencesStore.ts`:** Administra las CSS Variables globales (`--hud-color`, `--bg-image`) persistidas para el HUD en tiempo de ejecución, sincronizándolas con la base de datos al realizar cambios en vivo.
 
 ---
 
