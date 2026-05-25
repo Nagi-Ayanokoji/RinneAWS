@@ -462,5 +462,3 @@ src/
 * **`preferencesStore.ts`:** Administra las CSS Variables globales (`--hud-color`, `--bg-image`) persistidas para el HUD en tiempo de ejecución, sincronizándolas con la base de datos al realizar cambios en vivo.
 
 ---
-
-*Documento generado para el proyecto universitario Rin'ne — Plataforma de música personal.*
